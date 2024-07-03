@@ -1,4 +1,27 @@
 ---
 # tasks file for Net-square_ansible_assessment
-    
 
+# Installing prerequisites
+  - name: prepare workspace 
+    include_tasks: prepare.yml
+    tags: prepare
+
+# Configuring ca certificates
+  - name: configure certificate
+    include_tasks: configure_certificate.yml
+    tags: configure
+
+# Installing ca certificates
+  - name: install certificates
+    include_tasks: install_certificates.yml
+    tags: install
+
+# Creating virtual environment for the application
+  - name: create virtual environment
+    include_tasks: create_virtual_env.yml
+    tags: virtual_env
+
+# Deploying the application in virtual environment
+  - name: Deploying the application
+    include_tasks: Application_deployment.yml
+    tags: Deploy
