@@ -1,0 +1,56 @@
+---
+# creating a directory in target host
+  - name: create a directory for certificates
+    file:
+      path: /root/certs
+      state: directory
+      mode: '0755'
+      
+# copying certificates in to the target host
+  - name: Copy CA certificates to the target host
+    copy:
+      src: "{{ item }}"
+      dest: /root/certs/
+    with_items:
+    - "../files/app.py"
+    - "../files/CA1.crt"
+    - "../files/CA1.key"
+    - "../files/CA2.crt"
+    - "../files/CA2.key"
+    - "../files/CA3.crt"
+    - "../files/CA3.key"
+    - "../files/{{ wheel_file }}"
+
+# moving ca certificates to certs folder
+  - name: Move CA certificate to /etc/ssl/certs/
+    become: true
+    command: 'cp /root/certs/"{{ item }}" /etc/ssl/certs/'
+    with_items:
+    - "CA1.crt"
+    - "CA1.key"
+    - "CA2.crt"
+    - "CA2.key"
+    - "CA3.crt"
+    - "CA3.key"
+
+# updating the trust store
+  - name: Update CA certificate store
+    become: true
+    command: update-ca-trust
+
+# checking the certificate validity
+  - name: check certificate validity
+    become: true
+    shell: |
+      openssl x509 -in /etc/ssl/certs/CA1.crt  -text -noout --dates | grep notAfter | cut -d'=' -f2
+      openssl x509 -in /etc/ssl/certs/CA2.crt  -text -noout --dates | grep notAfter | cut -d'=' -f2
+      openssl x509 -in /etc/ssl/certs/CA3.crt  -text -noout --dates | grep notAfter | cut -d'=' -f2
+    register: command_output 
+
+# printing the validity
+  - name: print the exipry date
+    debug:
+      msg: |
+        Certificate CA1 is valid till {{ command_output.stdout_lines[0] }} 
+        Certificate CA2 is valid till {{ command_output.stdout_lines[1] }}
+        Certificate CA3 is valid till {{ command_output.stdout_lines[2] }}  
