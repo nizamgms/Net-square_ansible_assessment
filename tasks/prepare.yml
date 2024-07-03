@@ -1,0 +1,17 @@
+---
+# installing prerequisites
+
+  - name: make sure python installed in target server
+    package:
+      name: python3
+      state: present
+
+  - name: install flash
+    pip:
+      name: flask
+      state: present
+
+  - name: install virtual env package
+    yum:
+      name: python3-virtualenv
+      state: present
