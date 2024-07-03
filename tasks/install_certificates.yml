@@ -1,0 +1,17 @@
+---
+# installing CA1 certificate in trust store
+  - name: install CA1 certificate in trust store
+    shell: |
+        cat /root/certs/CA1.crt >> /etc/pki/tls/certs/ca-bundle.crt
+
+  - name: install CA2 certificate in trust store
+    shell: |
+        cat /root/certs/CA2.crt >> /etc/pki/tls/certs/ca-bundle.crt
+
+  - name: install CA3 certificate in trust store
+    shell: |
+        cat /root/certs/CA3.crt >> /etc/pki/tls/certs/ca-bundle.crt
+
+  - name: update the trust store
+    become: true
+    shell: update-ca-trust
